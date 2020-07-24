@@ -9,9 +9,26 @@
     <title>Movie DB</title>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-4.3.1.min.css">
 </head>
 <body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="navbar-brand">Movie Database</a>
+        </div>
+    </nav>
 
+    <div class="container">
+        <div class="jumbotron">
+            <h3 class="text-center">Search movies</h3>
+            <form id="search-form">
+                <input type="text" class="form-control" id="searchText" placeholder="Enter the title...">
+            </form>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="movies" class="row"></div>
+    </div>
 </body>
 </html>
