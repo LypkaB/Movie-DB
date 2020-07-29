@@ -7,38 +7,46 @@ function apiSearch(e) {
     const searchText = document.querySelector('.form-control').value,
           server = 'https://api.themoviedb.org/3/search/multi?api_key=ead41c3eaac089640f31601bd088ab4e&language=en&query=' + searchText;
 
-    requestApi(server);
+    movies.innerHTML = 'Download';
+
+    requestApi(server)
+        .then((result) => {
+            const output = JSON.parse(result);
+            let inner = '';
+
+            output.results.forEach((item) => {
+                let nameItem = item.name || item.title;
+
+                inner += `<div class="col-12 col-md-4 col-xl-3">${nameItem}</div>`;
+            });
+
+            movies.innerHTML = inner;
+        })
+        .catch((reason) => {
+            movies.innerHTML = 'Ooops...something gone wrong';
+            console.log('error: ' + reason.status);
+        })
 }
 
 searchForm.addEventListener('submit', apiSearch);
 
 function requestApi(url) {
-    const request = new XMLHttpRequest();
+    return new Promise((resolve, reject) => {
+        const request = new XMLHttpRequest();
 
-    request.open('GET', url);
-    request.send();
-    request.addEventListener('readystatechange', () => {
-        if (request.readyState !== 4) {
-            movies.innerHTML = 'Download';
-            return;
-        }
+        request.open('GET', url);
+        request.addEventListener('load', () => {
+            if (request.status !== 200) {
+                reject({status: request.status});
+                return;
+            }
 
-        if (request.status !== 200) {
-            movies.innerHTML = 'Ooops...something gone wrong';
-            console.log('error: ' + request.status);
-            return;
-        }
-
-        const output = JSON.parse(request.responseText);
-        let inner = '';
-
-        output.results.forEach((item) => {
-            let nameItem = item.name || item.title;
-
-            inner += `<div class="col-12 col-md-4 col-xl-3">${nameItem}</div>`;
+            resolve(request.response)
         });
 
-        movies.innerHTML = inner;
-        console.log(output);
-    })
+        request.addEventListener('error', () => {
+            reject({status: request.status});
+        });
+        request.send();
+    });
 }
