@@ -9,9 +9,11 @@ function apiSearch(e) {
 
     movies.innerHTML = 'Download';
 
-    requestApi(server)
-        .then((result) => {
-            const output = JSON.parse(result);
+    fetch(server)
+        .then((value) => {
+            return value.json();
+        })
+        .then((output) => {
             let inner = '';
 
             output.results.forEach((item) => {
@@ -25,28 +27,7 @@ function apiSearch(e) {
         .catch((reason) => {
             movies.innerHTML = 'Ooops...something gone wrong';
             console.log('error: ' + reason.status);
-        })
+        });
 }
 
 searchForm.addEventListener('submit', apiSearch);
-
-function requestApi(url) {
-    return new Promise((resolve, reject) => {
-        const request = new XMLHttpRequest();
-
-        request.open('GET', url);
-        request.addEventListener('load', () => {
-            if (request.status !== 200) {
-                reject({status: request.status});
-                return;
-            }
-
-            resolve(request.response)
-        });
-
-        request.addEventListener('error', () => {
-            reject({status: request.status});
-        });
-        request.send();
-    });
-}
