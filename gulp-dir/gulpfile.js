@@ -10,6 +10,11 @@ gulp.task('html', function() {
         .pipe(browserSync.reload({stream: true}))
 });
 
+gulp.task('css', function() {
+    return gulp.src('../assets/css/**/*.css')
+        .pipe(browserSync.reload({stream: true}))
+});
+
 /*
     gulp.task('scss', function() {
         return gulp.src('../assets/scss/style.scss')
@@ -32,6 +37,7 @@ gulp.task('js', function() {
 
 gulp.task('watcher', function() {
     gulp.watch('../*.html', gulp.parallel('html'));
+    gulp.watch('../assets/css/**/*.css', gulp.parallel('css'));
     // gulp.watch('../assets/scss/**/*.scss', gulp.parallel('scss'));
     gulp.watch('../assets/js/**/*.js', gulp.parallel('js'));
 });
