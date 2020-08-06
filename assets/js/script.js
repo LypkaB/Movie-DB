@@ -29,14 +29,19 @@ function apiSearch(e) {
             output.results.forEach((item) => {
                 let nameItem = item.name || item.title;
                 const poster = item.poster_path ? urlPoster + item.poster_path : './assets/images/not-found.jpg';
+                let dataInfo = '';
+
+                if (item.media_type !== 'person') dataInfo = `data-id="${item.id}" data-type="${item.media_type}"`;
 
                 inner += `<div class="col-6 col-md-4 col-xl-3 item">
-                               <img class="poster" src="${poster}" alt="${nameItem}">
+                               <img class="poster" src="${poster}" alt="${nameItem}" ${dataInfo}>
                                <h5>${nameItem}</h5>
                           </div>`;
             });
 
             movies.innerHTML = inner;
+
+            addEventMedia();
         })
         .catch((reason) => {
             movies.innerHTML = 'Ooops...something gone wrong';
@@ -45,3 +50,14 @@ function apiSearch(e) {
 }
 
 searchForm.addEventListener('submit', apiSearch);
+
+function addEventMedia() {
+    const media = movies.querySelectorAll('img[data-id]');
+
+    media.forEach((elem) => {
+        elem.style.cursor = 'pointer';
+        elem.addEventListener('click', function() {
+            console.log(this);
+        })
+    })
+}
