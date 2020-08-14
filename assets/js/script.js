@@ -6,6 +6,7 @@ function apiSearch(e) {
     e.preventDefault();
 
     const searchText = document.querySelector('.form-control').value;
+
     if (searchText.trim().length === 0) {
         movies.innerHTML = '<h2 class="col-12 text-center text-danger">The search field must not be empty</h2>';
         return;
@@ -18,6 +19,7 @@ function apiSearch(e) {
             if (value.status !== 200) {
                 return Promise.reject(new Error(value.status));
             }
+
             return value.json();
         })
         .then((output) => {
@@ -46,7 +48,7 @@ function apiSearch(e) {
         })
         .catch((reason) => {
             movies.innerHTML = 'Ooops...something gone wrong';
-            console.log('error: ' + reason.status);
+            console.log(reason || reason.status);
         });
 }
 
@@ -77,12 +79,18 @@ function showFullInfo() {
             if (value.status !== 200) {
                 return Promise.reject(new Error(value.status));
             }
+
             return value.json();
         })
         .then((output) => {
             movies.innerHTML = `<h4 class="col-12 text-center text-info">${output.name || output.title}</h4>
-                                <div class="col-4">
-                                    <img src="${urlPoster + output.poster_path}" alt="${output.name || output.title}">
+                                <div class="col-4 text-center">
+                                    ${(output.poster_path === null) ?
+                                            `<img src="./assets/images/not-found.jpg" alt="${output.name || output.title}">`
+                                        :
+                                            `<img src="${urlPoster + output.poster_path}" alt="${output.name || output.title}">`
+                                        }
+                                        
                                     ${(output.homepage) ?
                                             `<p class="text-center">
                                                 <a href="${output.homepage}" target="_blank">Official page</a>
@@ -113,11 +121,15 @@ function showFullInfo() {
                                     }
                                     
                                     <p>Description: ${output.overview}</p>
+                                    <br/>
+                                    <div class="youtube"></div>
                                 </div>`;
+
+            getVideo(this.dataset.type, this.dataset.id);
         })
         .catch((reason) => {
             movies.innerHTML = 'Ooops...something gone wrong';
-            console.log('error: ' + reason.status);
+            console.log(reason || reason.status);
         });
 }
 
@@ -127,6 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (value.status !== 200) {
                 return Promise.reject(new Error(value.status));
             }
+
             return value.json();
         })
         .then((output) => {
@@ -154,6 +167,39 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch((reason) => {
             movies.innerHTML = 'Ooops...something gone wrong';
-            console.log('error: ' + reason.status);
+            console.log(reason || reason.status);
         });
 });
+
+function getVideo(type, id) {
+    let youtube = movies.querySelector('.youtube');
+
+    fetch(`https://api.themoviedb.org/3/${type}/${id}/videos?api_key=ead41c3eaac089640f31601bd088ab4e&language=en-US`)
+        .then((value) => {
+            if (value.status !== 200) {
+                return Promise.reject(new Error(value.status));
+            }
+
+            return value.json();
+        })
+        .then((output) => {
+            let videoFrame = '<h5 class="text-info">Video</h5>';
+
+            if (output.results.length === 0) {
+                videoFrame = '<p class="text-danger">Sorry, no video</p>';
+            }
+
+            output.results.forEach((item) => {
+                videoFrame += `<iframe width="560" height="315" src="https://www.youtube.com/embed/${item.key}"
+                                    frameborder="0" allow="accelerometer; autoplay; encrypted-media;gyroscope;
+                                    picture-in-picture" allowfullscreen>
+                              </frame>`;
+            });
+
+            youtube.innerHTML = videoFrame;
+        })
+        .catch((reason) => {
+            youtube.innerHTML = 'Video is missing!';
+            console.log(reason || reason.status);
+        });
+}
