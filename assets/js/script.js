@@ -67,9 +67,9 @@ function showFullInfo() {
     let url = '';
 
     if (this.dataset.type === 'movie') {
-        url = 'http://api.themoviedb.org/3/movie/' + this.dataset.id + '?api_key=ead41c3eaac089640f31601bd088ab4e&language=en-US';
+        url = 'https://api.themoviedb.org/3/movie/' + this.dataset.id + '?api_key=ead41c3eaac089640f31601bd088ab4e&language=en-US';
     } else if (this.dataset.type === 'tv') {
-        url = 'http://api.themoviedb.org/3/tv/' + this.dataset.id + '?api_key=ead41c3eaac089640f31601bd088ab4e&language=en-US';
+        url = 'https://api.themoviedb.org/3/tv/' + this.dataset.id + '?api_key=ead41c3eaac089640f31601bd088ab4e&language=en-US';
     } else {
         movies.innerHTML = '<h2 class="col-12 text-center text-danger">An error occured, please try again later</h2>';
     }
